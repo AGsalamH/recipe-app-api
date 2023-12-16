@@ -15,3 +15,18 @@ services:
 
     command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
+    
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=recipes_api_proj
+    volumes:
+      - local_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  local_postgres_data:
