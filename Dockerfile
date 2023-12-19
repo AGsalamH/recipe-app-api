@@ -16,7 +16,8 @@ RUN apk add  --update --no-cache\
     --virtual .tmp_build_deps \
     postgresql-dev\
     musl-dev\
-    build-base && \
+    build-base\
+    zlib zlib-dev linux-headers && \
     apk add --update --no-cache postgresql-client && \
     python -m venv /pyenv && \
     /pyenv/bin/pip install --upgrade pip && \

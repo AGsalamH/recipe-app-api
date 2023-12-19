@@ -1,3 +1,9 @@
 Django>=4.2.8<5.0.0
 djangorestframework>=3.14.0
 psycopg2==2.9.9
+drf-spectacular==0.27.0
+Pillow==10.1.0
+uwsgi==2.0.23
+django-filter==23.5
+dj-rest-auth==5.0.2
+django-cors-headers==4.3.1
