@@ -9,7 +9,8 @@ class BaseModel(models.Model):
                             primary_key=True,
                             serialize=False,
                             auto_created=True,
-                            default=uuid.uuid4
+                            default=uuid.uuid4,
+                            editable=False
                         )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
