@@ -16,7 +16,7 @@ class BaseUser(BaseModel, AbstractBaseUser):
 
 
 class User(BaseUser, PermissionsMixin):
-    email = models.EmailField(unique=True, validators=[])
+    email = models.EmailField(unique=True)
 
     USERNAME_FIELD = 'email'
 
