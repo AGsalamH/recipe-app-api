@@ -27,7 +27,6 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-
     def create_superuser(self, name, email, password, **extra_fields):
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_staff', True)
@@ -36,21 +35,8 @@ class UserManager(BaseUserManager):
             raise ValueError("Superuser must have is_staff=True.")
         if extra_fields.get("is_superuser") is not True:
             raise ValueError("Superuser must have is_superuser=True.")
-        
+
         return self._create_user(name, email, password, **extra_fields)
-
-
-    def create_superuser(self, name, email, password, **extra_fields):
-        extra_fields.setdefault('is_superuser', True)
-        extra_fields.setdefault('is_staff', True)
-
-        if extra_fields.get("is_staff") is not True:
-            raise ValueError("Superuser must have is_staff=True.")
-        if extra_fields.get("is_superuser") is not True:
-            raise ValueError("Superuser must have is_superuser=True.")
-        
-        return self._create_user(name, email, password, **extra_fields)
-
 
     def creat_staffuser(self, name, email, password, **extra_fields):
         extra_fields.setdefault('is_superuser', False)
@@ -60,7 +46,7 @@ class UserManager(BaseUserManager):
             raise ValueError("staff user must have is_staff=True.")
         if extra_fields.get("is_superuser") is not True:
             raise ValueError("staff user must have is_superuser=False.")
-        
+
         return self._create_user(name, email, password, **extra_fields)
 
 
@@ -73,21 +59,17 @@ class User(BaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     name = models.CharField(max_length=120)
 
-
     is_active = models.BooleanField(
         "active status",
         default=True,
-        help_text =
-            "Designates whether this user should be treated as active. "
-            "Unselect this instead of deleting accounts."
+        help_text="Designates whether this user should be treated as active."
+        "Unselect this instead of deleting accounts."
     )
     is_staff = models.BooleanField(
         "staff status",
         default=False,
         help_text="Designates whether the user can log into this admin site.",
     )
-
-
 
     USERNAME_FIELD = 'email'
 
