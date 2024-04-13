@@ -38,7 +38,7 @@ class UserManager(BaseUserManager):
 
         return self._create_user(name, email, password, **extra_fields)
 
-    def creat_staffuser(self, name, email, password, **extra_fields):
+    def create_staffuser(self, name, email, password, **extra_fields):
         extra_fields.setdefault('is_superuser', False)
         extra_fields.setdefault('is_staff', True)
 
@@ -46,6 +46,12 @@ class UserManager(BaseUserManager):
             raise ValueError("staff user must have is_staff=True.")
         if extra_fields.get("is_superuser") is not True:
             raise ValueError("staff user must have is_superuser=False.")
+
+        return self._create_user(name, email, password, **extra_fields)
+
+    def create_user(self, name, email, password, **extra_fields):
+        extra_fields.setdefault('is_superuser', False)
+        extra_fields.setdefault('is_staff', False)
 
         return self._create_user(name, email, password, **extra_fields)
 
