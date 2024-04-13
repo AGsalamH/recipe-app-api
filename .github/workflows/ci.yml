@@ -14,7 +14,7 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USER }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Test
         run: docker-compose run --rm django sh -c "python manage.py wait_for_db && python manage.py test"
       - name: Lint
