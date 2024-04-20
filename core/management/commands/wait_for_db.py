@@ -1,5 +1,7 @@
 '''
-Django command to wait for the database to be available.And fix that race-condition that occurs when Running the project containers.
+Django command to wait for the database to be available.
+And fix that race-condition that occurs
+when Running the project containers.
 '''
 import time
 from django.core.management.base import BaseCommand
