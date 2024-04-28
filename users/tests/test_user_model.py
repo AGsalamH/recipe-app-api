@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 
 User = get_user_model()
 
@@ -36,3 +37,21 @@ class UserModelTestCase(TestCase):
                 name='test'
             )
             self.assertEqual(user.email, expected)
+
+    def test_new_user_without_email_raises_error(self):
+        '''Test creating users without email raises a ValueError'''
+        with self.assertRaises(ValueError):
+            get_user_model().objects.create_user(
+                name='ahmed',
+                password='sample123',
+                email=''
+            )
+
+    def test_new_user_with_invalid_email_raises_error(self):
+        '''Test creating users with invalid email raises a ValidationError'''
+        with self.assertRaises(ValidationError):
+            get_user_model().objects.create_user(
+                name='test',
+                password='sample123',
+                email='test'
+            )
