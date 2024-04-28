@@ -1,3 +1,6 @@
+'''
+Database Models
+'''
 from django.db import models   # Noqa
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import (
@@ -62,6 +65,7 @@ class BaseUser(BaseModel, AbstractBaseUser):
 
 
 class User(BaseUser, PermissionsMixin):
+    '''Users are represented in the database using this model'''
     email = models.EmailField(unique=True)
     name = models.CharField(max_length=120)
 
