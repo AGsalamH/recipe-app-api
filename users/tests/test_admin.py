@@ -29,3 +29,9 @@ class TestAdminSite(TestCase):
         response = self.client.get(reverse('admin:users_user_changelist'))
         self.assertContains(response, self.user.email)
         self.assertContains(response, self.user.name)
+
+    def test_create_user_page(self):
+        '''Test create user page'''
+        url = reverse('admin:users_user_add')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
