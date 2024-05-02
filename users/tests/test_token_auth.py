@@ -21,7 +21,7 @@ class TestUserTokenAuth(TestCase):
             'password': 'testpassword@123',
             'name': 'Test User',
         }
-        
+
         self.user = get_user_model().objects.create_user(
             **self.payload
         )
