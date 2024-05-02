@@ -3,7 +3,7 @@ from django.db import models
 
 
 class BaseModel(models.Model):
-    '''Base class for database models'''
+    '''Timestamped Base class for database models'''
     id = models.UUIDField(
                             verbose_name='ID',
                             primary_key=True,
