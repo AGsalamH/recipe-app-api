@@ -11,6 +11,7 @@ from rest_framework.authtoken.models import Token
 
 
 CREATE_TOKEN_URL = reverse('users:obtain-auth-token')
+USER_PROFILE_URL = reverse('users:me')
 
 
 class TestUserTokenAuth(TestCase):
@@ -39,3 +40,11 @@ class TestUserTokenAuth(TestCase):
             key=response.json().get('token')
         ).exists()
         self.assertTrue(token_exists)
+
+    def test_user_unauthorized(self):
+        '''Test authentication is required.'''
+        response = self.client.get(USER_PROFILE_URL)
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_401_UNAUTHORIZED
+        )
