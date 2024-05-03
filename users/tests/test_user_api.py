@@ -105,7 +105,7 @@ class PrivateUserAPITests(TestCase):
             'name': 'updated name',
             'password': 'new password'
         }
-        response = self.client.put(
+        response = self.client.patch(
             reverse(USER_PROFILE_URL, args=(self.user.id,)),
             data=payload
         )
