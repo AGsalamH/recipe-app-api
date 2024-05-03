@@ -4,10 +4,7 @@ Views for the users API.
 from django.contrib.auth import get_user_model
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
-from users.api.serializers import (
-    UserRegisterationSerializer,
-    UserProfileSerializer
-)
+from users.api.serializers import UserRegisterationSerializer
 
 
 class CreateUserView(generics.CreateAPIView):
@@ -19,5 +16,5 @@ class CreateUserView(generics.CreateAPIView):
 class RetrieveUpdateProfileView(generics.RetrieveUpdateAPIView):
     '''Retrieve and modify profile data for a user.'''
     queryset = get_user_model().objects.all()
-    serializer_class = UserProfileSerializer
+    serializer_class = UserRegisterationSerializer
     permission_classes = (IsAuthenticated,)
