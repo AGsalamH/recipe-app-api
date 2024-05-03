@@ -10,7 +10,7 @@ from rest_framework.test import APIClient
 from rest_framework.authtoken.models import Token
 
 
-CREATE_TOKEN_URL = reverse('obtain-auth-token')
+CREATE_TOKEN_URL = reverse('users:obtain-auth-token')
 
 
 class TestUserTokenAuth(TestCase):
