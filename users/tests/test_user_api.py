@@ -6,10 +6,7 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
 from rest_framework import status
-from users.tests.test_token_auth import (
-    CREATE_TOKEN_URL,
-    USER_PROFILE_URL
-)
+from users.tests.test_token_auth import USER_PROFILE_URL
 
 
 CREATE_USER_URL = reverse('users:create')
@@ -79,19 +76,24 @@ class PrivateUserAPITests(TestCase):
 
     def test_retrieve_profile_success(self):
         '''Test retrieving profile for logged in user.'''
-        response = self.client.get(USER_PROFILE_URL)
+        response = self.client.get(
+            reverse(USER_PROFILE_URL, args=(self.user.id,)))
         self.assertEqual(
             response.status_code,
             status.HTTP_200_OK
         )
+
         self.assertEqual(
-            response.data,
-            self.payload.pop('password')
+            response.data, {
+                'email': 'test@example.com',
+                'name': 'Test User'
+            },
         )
 
     def test_post_profile_not_allowed(self):
         '''Test POST request for profile endpoint NOT ALLOWED.'''
-        response = self.client.post(USER_PROFILE_URL, {})
+        response = self.client.post(
+            reverse(USER_PROFILE_URL, args=(self.user.id,)), {})
         self.assertEqual(
             response.status_code,
             status.HTTP_405_METHOD_NOT_ALLOWED
@@ -103,7 +105,10 @@ class PrivateUserAPITests(TestCase):
             'name': 'updated name',
             'password': 'new password'
         }
-        response = self.client.put(USER_PROFILE_URL, payload)
+        response = self.client.put(
+            reverse(USER_PROFILE_URL, args=(self.user.id,)),
+            data=payload
+        )
         self.user.refresh_from_db()
 
         self.assertEqual(
