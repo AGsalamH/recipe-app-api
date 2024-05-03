@@ -63,14 +63,14 @@ class PublicUserAPITests(TestCase):
 
 class PrivateUserAPITests(TestCase):
     '''Test API requests that require authentication'''
-    
+
     def setUp(self):
         ''' Create and authenticate user.'''
         self.client = APIClient()
         self.payload = {
-            'email':'test@example.com',
-            'password':'pass@123456',
-            'name':'Test User'
+            'email': 'test@example.com',
+            'password': 'pass@123456',
+            'name': 'Test User'
         }
         self.user = create_user(**self.payload)
         self.client.force_authenticate(self.user)
@@ -105,7 +105,7 @@ class PrivateUserAPITests(TestCase):
         }
         response = self.client.put(USER_PROFILE_URL, payload)
         self.user.refresh_from_db()
-        
+
         self.assertEqual(
             response.status_code,
             status.HTTP_200_OK
