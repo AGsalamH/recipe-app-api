@@ -11,7 +11,7 @@ class Recipe(models.Model):
     description = models.TextField(blank=True)
 
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    
+
     def __str__(self):
         '''String representation of a recipe.'''
         return self.title
