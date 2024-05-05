@@ -43,7 +43,7 @@ class TestRecipeAPI(TestCase):
 
     def test_create_recipe_success(self):
         '''Test CREATE recipe API endpoint.'''
-        response = self.client.post(get_recipe_urls(), self.payload)
+        response = self.client.post(get_recipe_urls(), {**self.payload, 'user': self.user.id})
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_update_recipe_success(self):
