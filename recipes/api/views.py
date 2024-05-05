@@ -13,3 +13,6 @@ class RecipeViewSet(ModelViewSet):
     queryset = Recipe.objects.select_related('user').all()
     serializer_class = RecipeSerializer
     permission_classes = (IsAuthenticated,)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
