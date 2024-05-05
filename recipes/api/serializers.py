@@ -11,6 +11,11 @@ class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = ('id', 'title', 'description', 'link', 'price', 'user')
+        extra_kwargs = {
+            'user': {
+                'read_only': True
+            }
+        }
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
