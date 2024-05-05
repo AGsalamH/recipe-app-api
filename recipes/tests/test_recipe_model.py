@@ -22,7 +22,7 @@ class TestRecipeModel(TestCase):
             user=user,
             title='My first Recipe',
             time_in_minutes=5,
-            price=Decimal('6.50')
+            price=Decimal('6.50'),
             description='This is my first recipe.'
         )
         self.assertEqual(str(recipe), recipe.title)
