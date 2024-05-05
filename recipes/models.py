@@ -10,7 +10,7 @@ class Recipe(models.Model):
     price = models.DecimalField(decimal_places=2, max_digits=7)
     description = models.TextField(blank=True)
     link = models.CharField(max_length=255, blank=True)
-    
+
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
 
     def __str__(self):
