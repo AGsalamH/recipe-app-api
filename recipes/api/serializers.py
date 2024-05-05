@@ -12,8 +12,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = ('id', 'title', 'description', 'link', 'price', 'user')
 
-
     def to_representation(self, instance):
-        data =  super().to_representation(instance)
+        data = super().to_representation(instance)
         data['user'] = get_user_model().objects.get(id=data['user']).name
         return data
