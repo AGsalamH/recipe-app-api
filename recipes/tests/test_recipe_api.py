@@ -36,6 +36,12 @@ class TestRecipeAPI(TestCase):
         self.recipe = Recipe.objects.create(**self.payload)
         self.client.force_authenticate(self.user)
 
+    def test_auth_required(self):
+        '''Test auth is required to call API.'''
+        self.client.logout()
+        response = self.client.get(get_recipe_urls())
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
     def test_list_recipes(self):
         '''Test LIST recipes API endpoint.'''
         response = self.client.get(get_recipe_urls())
