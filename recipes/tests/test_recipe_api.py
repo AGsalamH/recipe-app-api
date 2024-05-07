@@ -76,3 +76,6 @@ class TestRecipeAPI(TestCase):
         '''Test Deleting a recipe.'''
         response = self.client.delete(get_recipe_urls(self.recipe.id))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(Recipe.objects.filter(
+            id=self.recipe.id).exists()
+        )
