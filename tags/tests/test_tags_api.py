@@ -9,6 +9,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from tags.models import Tag
+from tags.api.serializers import TagSerializer
 
 TAGS_API_URL = reverse('tag-list')
 
@@ -51,5 +52,8 @@ class TestTagAPI(TestCase):
     def test_list_tags(self):
         '''Test Listing tags is successful.'''
         response = self.client.get(TAGS_API_URL)
-        tags = Tag.objects.filter(user=self.user)
-        self.assertEqual(response.data, list(tags))
+        tags = Tag.objects.filter(user=self.user).order_by('-id')
+        serializer = TagSerializer(tags, many=True)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, serializer.data)
