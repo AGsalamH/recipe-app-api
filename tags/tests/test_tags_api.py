@@ -40,7 +40,7 @@ class TestTagAPI(TestCase):
         create_list_of_tags(5, self.user)
         self.client.force_authenticate(self.user)
 
-    def test_aut_is_required(self):
+    def test_auth_is_required(self):
         '''Test authentication is required to list tags.'''
         self.client.logout()
         response = self.client.get(TAGS_API_URL)
