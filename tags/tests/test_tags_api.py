@@ -4,6 +4,8 @@ import string
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
+
+from rest_framework import status
 from rest_framework.test import APIClient
 
 from tags.models import Tag
@@ -35,6 +37,16 @@ class TestTagAPI(TestCase):
             'test@pass'
         )
         create_list_of_tags(5, self.user)
+        self.client.force_authenticate(self.user)
+
+    def test_aut_is_required(self):
+        '''Test authentication is required to list tags.'''
+        self.client.logout()
+        response = self.client.get(TAGS_API_URL)
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_401_UNAUTHORIZED
+        )
 
     def test_list_tags(self):
         '''Test Listing tags is successful.'''
