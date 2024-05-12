@@ -14,6 +14,11 @@ from tags.api.serializers import TagSerializer
 TAGS_API_URL = reverse('tag-list')
 
 
+def get_tag_endpoint(tag_id):
+    '''Return Tag detail endpoint by id'''
+    return reverse('tag-detail', args=[tag_id])
+
+
 def generate_random_string(length=6):
     '''Create and return random string'''
     alphabet = string.ascii_letters + string.digits
@@ -57,3 +62,21 @@ class TestTagAPI(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, serializer.data)
+
+    def test_update_tag_success(self):
+        '''Test updating a tag is successful.'''
+        self.tag = Tag.objects.create(
+            user=self.user,
+            name='Test Tag'
+        )
+        payload = {
+            'name': 'Updated name',
+            'user': self.user.id,
+        }
+
+        response = self.client.put(get_tag_endpoint(self.tag.id), payload)
+        self.tag.refresh_from_db()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, TagSerializer(self.tag).data)
+        self.assertEqual(response.data['name'], str(self.tag))
