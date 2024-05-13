@@ -83,3 +83,12 @@ class TestTagAPI(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, TagSerializer(self.tag).data)
         self.assertEqual(response.data['name'], str(self.tag))
+
+    def test_deleting_tags(self):
+        '''Test deleting tag is successful.'''
+        tag = create_list_of_tags(1, self.user)[0]
+        response = self.client.delete(get_tag_endpoint(tag.id))
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(
+            Tag.objects.filter(id=tag.id).exists()
+        )
