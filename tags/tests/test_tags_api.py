@@ -92,3 +92,18 @@ class TestTagAPI(TestCase):
         self.assertFalse(
             Tag.objects.filter(id=tag.id).exists()
         )
+
+    def test_create_tag(self):
+        '''Test creating a tag is successful.'''
+        payload = {'name': 'New Tag'}
+        response = self.client.post(TAGS_API_URL, payload)
+        tag = Tag.objects.get(id=response.data['id'])
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data, TagSerializer(tag).data)
+
+    def test_tag_name_required(self):
+        '''Test tag name is required to create a tag.'''
+        response = self.client.post(TAGS_API_URL, {})
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
