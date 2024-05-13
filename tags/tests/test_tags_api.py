@@ -27,11 +27,14 @@ def generate_random_string(length=6):
 
 def create_list_of_tags(num_of_tags, user):
     '''Create and return multiple tags.'''
+    tags = []
     for _ in range(num_of_tags):
-        Tag.objects.create(
+        tag = Tag.objects.create(
             name=generate_random_string(),
             user=user
         )
+        tags.append(tag)
+    return tags
 
 
 class TestTagAPI(TestCase):
