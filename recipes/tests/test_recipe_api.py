@@ -7,6 +7,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from recipes.models import Recipe
+from recipes.api.serializers import TagRecipeSerializer
 
 
 def get_recipe_urls(arg=None):
@@ -79,3 +80,30 @@ class TestRecipeAPI(TestCase):
         self.assertFalse(Recipe.objects.filter(
             id=self.recipe.id).exists()
         )
+
+    def test_create_recipe_with_tags(self):
+        '''Test Creating a recipe with multiple tags'''
+        payload = {
+            'title': 'My new recipe',
+            'description': 'This is a recipe with multiple tags',
+            'price': Decimal('7.00'),
+            'time_in_minutes': 15,
+            'tags': [
+                {'name': 'Fast-Food'},
+                {'name': 'meat'},
+                {'name': 'Mashroom'},
+            ]
+        }
+
+        response = self.client.post(get_recipe_urls(), payload)
+        qs = Recipe.objects.filter(
+            id=response.data['id']
+        ).select_related('user').prefetch_related('tags')
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(qs.exists())
+
+        recipe = qs.get()
+        serializer = TagRecipeSerializer(recipe)
+
+        self.assertEqual(payload['tags'], serializer.data['tags'])
