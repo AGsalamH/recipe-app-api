@@ -95,7 +95,7 @@ class TestRecipeAPI(TestCase):
             ]
         }
 
-        response = self.client.post(get_recipe_urls(), payload)
+        response = self.client.post(get_recipe_urls(), payload, format='json')
         qs = Recipe.objects.filter(
             id=response.data['id']
         ).select_related('user').prefetch_related('tags')
@@ -104,6 +104,12 @@ class TestRecipeAPI(TestCase):
         self.assertTrue(qs.exists())
 
         recipe = qs.get()
-        serializer = TagRecipeSerializer(recipe)
+        self.assertEqual(recipe.tags.count(), 3)
 
-        self.assertEqual(payload['tags'], serializer.data['tags'])
+        for tag in payload['tags']:
+            tag_exists = recipe.tags.filter(
+                name=tag['name'],
+                user=self.user
+            ).exists()
+
+            self.assertTrue(tag_exists)
