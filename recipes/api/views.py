@@ -5,13 +5,13 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 
 from recipes.models import Recipe
-from recipes.api.serializers import RecipeSerializer
+from recipes.api.serializers import TagRecipeSerializer
 
 
 class RecipeViewSet(ModelViewSet):
     '''Recipes model CRUD viewset.'''
     queryset = Recipe.objects.select_related('user').all()
-    serializer_class = RecipeSerializer
+    serializer_class = TagRecipeSerializer
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
