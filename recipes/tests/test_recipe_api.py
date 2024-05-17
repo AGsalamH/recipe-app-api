@@ -123,13 +123,13 @@ class TestRecipeAPI(TestCase):
             'price': Decimal('10.00'),
             'time_in_minutes': 5,
             'tags': [
-                {'name': 'Indian'}, # already exists
-                {'name': 'Break-Fast'} # new
+                {'name': 'Indian'},  # already exists
+                {'name': 'Break-Fast'}  # new
             ]
         }
 
         response = self.client.post(get_recipe_urls(), payload, format='json')
-        
+
         qs = Recipe.objects.filter(
             id=response.data['id'],
             user=self.user
@@ -138,7 +138,7 @@ class TestRecipeAPI(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(recipe.tags.count(), 2)
-        
+
         for tag in payload['tags']:
             tag_exists = recipe.tags.filter(
                 name=tag['name'],
@@ -150,5 +150,5 @@ class TestRecipeAPI(TestCase):
         indian_tag_count = Tag.objects.filter(
             name=payload['tags'][0]['name']
         ).count()
-        
+
         self.assertEqual(indian_tag_count, 1)
