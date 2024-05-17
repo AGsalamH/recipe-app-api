@@ -13,7 +13,7 @@ class Recipe(models.Model):
     link = models.CharField(max_length=255, blank=True)
 
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    tags = models.ManyToManyField(Tag, blank=True, null=True, related_name='recipes')
+    tags = models.ManyToManyField(Tag, blank=True, related_name='recipes')
 
     def __str__(self):
         '''String representation of a recipe.'''
