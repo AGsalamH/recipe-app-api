@@ -41,12 +41,13 @@ class TagRecipeSerializer(RecipeSerializer):
         # Store tags in DB
         if tags:
             created_tags: list[Tag] = []
+            auth_user = self.context['request'].user
             for tag in tags:
                 # Get tag from db.
                 # Create one if it does NOT exist.
                 tag, _ = Tag.objects.get_or_create(
                     name=tag['name'],
-                    user=self.context['request'].user
+                    user=auth_user
                 )
                 created_tags.append(tag)
             # Handle creating recipe logic
