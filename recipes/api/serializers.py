@@ -5,6 +5,9 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from recipes.models import Recipe
 
+from tags.models import Tag
+from tags.api.serializers import TagSerializer
+
 
 class RecipeSerializer(serializers.ModelSerializer):
     '''Recipe representation serializer.'''
@@ -21,3 +24,33 @@ class RecipeSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         data['user'] = get_user_model().objects.get(id=data['user']).name
         return data
+
+
+class TagRecipeSerializer(RecipeSerializer):
+    '''Recipe with tags Serializer'''
+    tags = TagSerializer(many=True, required=False)
+
+    class Meta(RecipeSerializer.Meta):
+        fields = list(RecipeSerializer.Meta.fields) + ['tags']
+
+    def create(self, validated_data):
+        tags = validated_data.pop('tags', None)
+        recipe = Recipe.objects.create(**validated_data)
+
+        # remove tags data from validated_data
+        # Store tags in DB
+        if tags:
+            created_tags: list[Tag] = []
+            for tag in tags:
+                # Get tag from db.
+                # Create one if it does NOT exist.
+                tag, _ = Tag.objects.get_or_create(
+                    name=tag['name'],
+                    user=self.context['request'].user
+                )
+                created_tags.append(tag)
+            # Handle creating recipe logic
+            recipe.tags.set(created_tags)
+        recipe.save()
+
+        return recipe
