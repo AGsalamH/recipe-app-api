@@ -61,8 +61,6 @@ class TagRecipeSerializer(RecipeSerializer):
         # get fields info
         info: model_meta.FieldInfo = model_meta.get_field_info(instance)
 
-        print(validated_data['tags'])
-
         # collect m2m fields
         many_to_many = {}
         for field, value in validated_data.items():
