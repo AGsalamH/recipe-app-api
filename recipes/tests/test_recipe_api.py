@@ -7,6 +7,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from recipes.models import Recipe
+from recipes.api.serializers import TagRecipeSerializer
 from tags.models import Tag
 
 
@@ -152,3 +153,31 @@ class TestRecipeAPI(TestCase):
         ).count()
 
         self.assertEqual(indian_tag_count, 1)
+
+    def test_update_recipe_tags(self):
+        '''Test updating recipe tags API'''
+        tag = Tag.objects.create(name='Thai', user=self.user)
+        self.recipe.tags.add(tag)
+
+        payload = {
+            'title': 'Indian recipe',
+            'description': 'This is a recipe',
+            'price': Decimal('10.00'),
+            'time_in_minutes': 5,
+            'tags': [
+                {'name': tag.name},  # already exists
+                {'name': 'Dinner'},  # new
+            ]
+        }
+
+        response = self.client.patch(
+            get_recipe_urls(self.recipe.id),
+            payload,
+            format='json'
+        )
+
+        self.recipe.refresh_from_db()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, TagRecipeSerializer(self.recipe).data)
+        self.assertEqual(self.recipe.tags.count(), 2)
