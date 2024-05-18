@@ -50,6 +50,7 @@ LOCAL_APPS = [
     'users',
     'recipes',
     'tags',
+    'ingredients',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
