@@ -4,6 +4,7 @@ Recipe API serializers.
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from recipes.models import Recipe
+from rest_framework.utils import model_meta
 
 from tags.models import Tag
 from tags.api.serializers import TagSerializer
@@ -55,3 +56,32 @@ class TagRecipeSerializer(RecipeSerializer):
         recipe.save()
 
         return recipe
+
+    def update(self, instance, validated_data):
+        # get fields info
+        info: model_meta.FieldInfo = model_meta.get_field_info(instance)
+
+        print(validated_data['tags'])
+
+        # collect m2m fields
+        many_to_many = {}
+        for field, value in validated_data.items():
+            # loop over fields and check if they represent a m2m relation.
+            # if so, pop it from validated_data and append it to many_to_many
+            if field in info.relations and info.relations[field].to_many:
+                many_to_many[field] = value
+            else:
+                setattr(instance, field, value)
+
+        instance.save()
+
+        # Handling m2m fields
+        for field, value in many_to_many.items():
+            m2m_field = getattr(instance, field)
+            for item in value:
+                m2m_field.get_or_create(
+                    **item,
+                    user=instance.user  # auth_user
+                )
+
+        return instance
