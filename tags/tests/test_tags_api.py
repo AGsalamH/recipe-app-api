@@ -1,6 +1,3 @@
-import random
-import string
-
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
@@ -10,6 +7,7 @@ from rest_framework.test import APIClient
 
 from tags.models import Tag
 from tags.api.serializers import TagSerializer
+from core.utils import generate_random_string
 
 TAGS_API_URL = reverse('tag-list')
 
@@ -17,13 +15,6 @@ TAGS_API_URL = reverse('tag-list')
 def get_tag_endpoint(tag_id):
     '''Return Tag detail endpoint by id'''
     return reverse('tag-detail', args=[tag_id])
-
-
-def generate_random_string(length=6):
-    '''Create and return random string'''
-    alphabet = string.ascii_letters + string.digits
-    return ''.join(random.choice(alphabet) for _ in range(length))
-
 
 def create_list_of_tags(num_of_tags, user):
     '''Create and return multiple tags.'''
