@@ -16,8 +16,6 @@ def get_tag_endpoint(tag_id):
     '''Return Tag detail endpoint by id'''
     return reverse('tag-detail', args=[tag_id])
 
-
-
 def create_list_of_tags(num_of_tags, user):
     '''Create and return multiple tags.'''
     tags = []
