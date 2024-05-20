@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from tags.models import Tag
+from ingredients.models import Ingredient
 
 
 class Recipe(models.Model):
@@ -14,6 +15,11 @@ class Recipe(models.Model):
 
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     tags = models.ManyToManyField(Tag, blank=True, related_name='recipes')
+    ingredients = models.ManyToManyField(
+        Ingredient,
+        blank=True,
+        related_name='recipes'
+    )
 
     def __str__(self):
         '''String representation of a recipe.'''
