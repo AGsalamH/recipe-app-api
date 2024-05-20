@@ -56,5 +56,5 @@ class TestIngredientsAPI(TestCase):
         self.assertEqual(len(response.data), num_of_ingredients)
         self.assertEqual(
             response.data,
-            IngredientSerializer(ingredients, many=True)
+            IngredientSerializer(ingredients, many=True).data
         )
