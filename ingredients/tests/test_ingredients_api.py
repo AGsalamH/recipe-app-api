@@ -43,6 +43,13 @@ class TestIngredientsAPI(TestCase):
         )
         self.client.force_authenticate(self.user)
 
+    def test_auth_required(self):
+        '''Test that authentication is required to access API.'''
+        self.client.logout()
+        response = self.client.get(INGREDIENTS_URL)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
     def test_list_ingredients(self):
         '''Test List ingredients endpoint.'''
         num_of_ingredients = 3
