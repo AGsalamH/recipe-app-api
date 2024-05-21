@@ -94,3 +94,25 @@ class TestIngredientsAPI(TestCase):
         response = self.client.get(retrieve_url(dummy_id))
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_ingredient(self):
+        '''Test deleting ingredient is successful.'''
+
+        ingredient = Ingredient.objects.create(
+            name='test ingredient',
+            user=self.user
+        )
+        response = self.client.delete(retrieve_url(ingredient.id))
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(
+            Ingredient.objects.filter(user=self.user).exists()
+        )
+
+    def test_delete_ingredient_not_found(self):
+        '''Test deleting ingredient faliure.'''
+
+        dummy_id = 123
+        response = self.client.delete(retrieve_url(dummy_id))
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
