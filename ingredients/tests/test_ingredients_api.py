@@ -75,3 +75,22 @@ class TestIngredientsAPI(TestCase):
 
         ingredient = Ingredient.objects.get(user=self.user)
         self.assertEqual(response.data, IngredientSerializer(ingredient).data)
+
+    def test_retrieve_ingredient(self):
+        '''Test retrieving single ingredient by ID.'''
+        ingredient = Ingredient.objects.create(
+            name='test ingredient',
+            user=self.user
+        )
+
+        response = self.client.get(retrieve_url(ingredient.id))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, IngredientSerializer(ingredient).data)
+
+    def test_retrieve_not_existed_ingredient(self):
+        '''Test retrieving ingredient that does NOT exist!'''
+        dummy_id = 123
+        response = self.client.get(retrieve_url(dummy_id))
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
