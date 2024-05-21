@@ -7,7 +7,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from recipes.models import Recipe
-from recipes.api.serializers import TagRecipeSerializer
+from recipes.api.serializers import RecipeSerializer
 from tags.models import Tag
 from ingredients.models import Ingredient
 
@@ -180,7 +180,7 @@ class TestRecipeAPI(TestCase):
         self.recipe.refresh_from_db()
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data, TagRecipeSerializer(self.recipe).data)
+        self.assertEqual(response.data, RecipeSerializer(self.recipe).data)
         self.assertEqual(self.recipe.tags.count(), 2)
 
     def test_create_recipe_with_ingredients(self):
@@ -225,13 +225,16 @@ class TestRecipeAPI(TestCase):
             user=self.user
         )
         payload = {
-            **self.payload,
+            'title': 'Indian recipe',
+            'description': 'This is a recipe',
+            'price': Decimal('10.00'),
+            'time_in_minutes': 5,
             'ingredients': [
-                {'name': ingredient.name, 'user': self.user},  # exists!
+                {'name': ingredient.name},  # exists!
             ]
         }
 
-        response = self.client.post(get_recipe_urls(), payload)
+        response = self.client.post(get_recipe_urls(), payload, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
