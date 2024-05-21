@@ -8,8 +8,14 @@ class IngredientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ingredient
-        fields = ('id', 'name')
+        fields = ('id', 'name', 'user')
+        read_only_fields = ('user',)
 
     def save(self, **kwargs):
         kwargs['user'] = self.context['request'].user  # auth_user
         return super().save(**kwargs)
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data['user'] = self.context['request'].user.name  # auth_user
+        return data

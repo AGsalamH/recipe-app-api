@@ -7,8 +7,9 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from recipes.models import Recipe
-from recipes.api.serializers import TagRecipeSerializer
+from recipes.api.serializers import RecipeSerializer
 from tags.models import Tag
+from ingredients.models import Ingredient
 
 
 def get_recipe_urls(arg=None):
@@ -179,5 +180,80 @@ class TestRecipeAPI(TestCase):
         self.recipe.refresh_from_db()
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data, TagRecipeSerializer(self.recipe).data)
+        self.assertEqual(response.data, RecipeSerializer(self.recipe).data)
         self.assertEqual(self.recipe.tags.count(), 2)
+
+    def test_create_recipe_with_ingredients(self):
+        '''Test create a recipe with list of ingredients.'''
+        payload = {
+            'title': 'Indian recipe',
+            'description': 'This is a recipe',
+            'price': Decimal('10.00'),
+            'time_in_minutes': 5,
+            'ingredients': [
+                {'name': 'ingredient1'},
+                {'name': 'ingredient2'},
+            ]
+        }
+        response = self.client.post(get_recipe_urls(), payload, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        recipe = Recipe.objects.get(
+            id=response.data['id'],
+            user=self.user
+        )
+
+        self.assertEqual(
+            recipe.ingredients.count(),
+            len(payload['ingredients'])
+        )
+
+        for ingredient in payload['ingredients']:
+            ingredient_qs = recipe.ingredients.filter(
+                name=ingredient['name'],
+                user=self.user
+            )
+
+            self.assertTrue(ingredient_qs.exists())
+            # make sure no duplicates
+            self.assertEqual(ingredient_qs.count(), 1)
+
+    def test_create_recipe_with_existing_ingredients(self):
+        '''Test creating a recipe with already existing ingredients.'''
+        ingredient = Ingredient.objects.create(
+            name='ingredient1',
+            user=self.user
+        )
+        payload = {
+            'title': 'Indian recipe',
+            'description': 'This is a recipe',
+            'price': Decimal('10.00'),
+            'time_in_minutes': 5,
+            'ingredients': [
+                {'name': ingredient.name},  # exists!
+            ]
+        }
+
+        response = self.client.post(get_recipe_urls(), payload, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        recipe = Recipe.objects.get(
+            id=response.data['id'],
+            user=self.user
+        )
+
+        self.assertEqual(
+            recipe.ingredients.count(),
+            len(payload['ingredients'])
+        )
+
+        for ingredient in payload['ingredients']:
+            ingredient_qs = recipe.ingredients.filter(
+                name=ingredient['name'],
+                user=self.user
+            )
+
+            self.assertTrue(ingredient_qs.exists())
+            # make sure no duplicates
+            self.assertEqual(ingredient_qs.count(), 1)

@@ -3,46 +3,47 @@ Recipe API serializers.
 '''
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
+
 from recipes.models import Recipe
 from rest_framework.utils import model_meta
 
 from tags.models import Tag
 from tags.api.serializers import TagSerializer
 
+from ingredients.models import Ingredient
+from ingredients.api.serializers import IngredientSerializer
+
 
 class RecipeSerializer(serializers.ModelSerializer):
     '''Recipe representation serializer.'''
+
+    tags = TagSerializer(many=True, required=False)
+    ingredients = IngredientSerializer(many=True, required=False)
+
     class Meta:
         model = Recipe
-        fields = ('id', 'title', 'description', 'link', 'price', 'user')
-        extra_kwargs = {
-            'user': {
-                'read_only': True
-            }
-        }
+        fields = ('id', 'title', 'description',
+                  'link', 'price', 'user', 'tags', 'ingredients')
+
+        read_only_fields = ('user',)
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data['user'] = get_user_model().objects.get(id=data['user']).name
+        auth_user = get_user_model().objects.get(id=data['user'])
+        data['user'] = auth_user.name
         return data
-
-
-class TagRecipeSerializer(RecipeSerializer):
-    '''Recipe with tags Serializer'''
-    tags = TagSerializer(many=True, required=False)
-
-    class Meta(RecipeSerializer.Meta):
-        fields = list(RecipeSerializer.Meta.fields) + ['tags']
 
     def create(self, validated_data):
         tags = validated_data.pop('tags', None)
+        ingredients = validated_data.pop('ingredients', None)
+        auth_user = self.context['request'].user
+
         recipe = Recipe.objects.create(**validated_data)
 
         # remove tags data from validated_data
         # Store tags in DB
         if tags:
             created_tags: list[Tag] = []
-            auth_user = self.context['request'].user
             for tag in tags:
                 # Get tag from db.
                 # Create one if it does NOT exist.
@@ -53,7 +54,19 @@ class TagRecipeSerializer(RecipeSerializer):
                 created_tags.append(tag)
             # Handle creating recipe logic
             recipe.tags.set(created_tags)
-        recipe.save()
+
+        if ingredients:
+            created_ingredients: list[Ingredient] = []
+            for ingredient in ingredients:
+                # Get from db.
+                # Create one if it does NOT exist.
+                ingredient, _ = Ingredient.objects.get_or_create(
+                    name=ingredient['name'],
+                    user=auth_user
+                )
+                created_ingredients.append(ingredient)
+
+            recipe.ingredients.set(created_ingredients)
 
         return recipe
 
