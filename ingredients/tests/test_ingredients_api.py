@@ -116,3 +116,33 @@ class TestIngredientsAPI(TestCase):
         response = self.client.delete(retrieve_url(dummy_id))
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_update_ingredient(self):
+        '''Test updating an ingredient is successful.'''
+        ingredient, *_ = create_ingredients(self.user)
+        update_payload = {'name': 'updated name'}
+
+        response = self.client.put(
+            retrieve_url(ingredient.id),
+            update_payload
+        )
+        ingredient.refresh_from_db()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(ingredient.name, update_payload['name'])
+
+    def test_update_ingredient_failure(self):
+        '''Test updating an ingredient failure.'''
+        ingredient, *_ = create_ingredients(self.user)
+
+        response = self.client.put(retrieve_url(ingredient.id), {})
+        ingredient.refresh_from_db()
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_update_not_found_ingredient(self):
+        '''Test updating ingredient that does NOT exist!'''
+        dummy_id = 123
+        response = self.client.put(retrieve_url(dummy_id), {})
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
