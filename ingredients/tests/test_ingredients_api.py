@@ -64,3 +64,14 @@ class TestIngredientsAPI(TestCase):
             response.data,
             IngredientSerializer(ingredients, many=True).data
         )
+
+    def test_create_ingredient(self):
+        '''Test creating ingredient endpoint.'''
+        payload = {'name': 'ingredient1'}
+        response = self.client.post(INGREDIENTS_URL, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['name'], payload['name'])
+
+        ingredient = Ingredient.objects.get(user=self.user)
+        self.assertEqual(response.data, IngredientSerializer(ingredient).data)
