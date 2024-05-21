@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.contrib.auth import get_user_model
 
 from ingredients.models import Ingredient
 
@@ -17,5 +18,6 @@ class IngredientSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data['user'] = self.context['request'].user.name  # auth_user
+        auth_user = get_user_model().objects.get(id=data['user'])
+        data['user'] = auth_user.name
         return data
