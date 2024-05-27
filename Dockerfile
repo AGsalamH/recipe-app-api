@@ -18,7 +18,7 @@ RUN apk add  --update --no-cache\
     musl-dev\
     build-base\
     zlib zlib-dev linux-headers && \
-    apk add --update --no-cache postgresql-client && \
+    apk add --update --no-cache postgresql-client jpeg-dev && \
     python -m venv /pyenv && \
     /pyenv/bin/pip install --upgrade pip && \
     /pyenv/bin/pip install -r /tmp/requirements.txt && \
