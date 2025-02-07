@@ -102,4 +102,3 @@ Authorization: Token yourtoken
     - **`GET /api/tags/{id}/`** - Retrieve a specific tag
     - **`PUT /api/tags/{id}/`** - Update a specific tag
     - **`DELETE /api/tags/{id}/`** - Delete a specific tag
-
